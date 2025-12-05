@@ -16,120 +16,101 @@ import numpy as np
 
 
 def load_and_explore_data(filename):
-    """
+
     Load the student scores data and explore it
     
-    Args:
-        filename: name of the CSV file to load
-    
-    Returns:
-        pandas DataFrame containing the data
-    """
-    # TODO: Load the CSV file using pandas
-    
-    # TODO: Print the first 5 rows
-    
-    # TODO: Print the shape of the dataset (number of rows and columns)
-    
-    # TODO: Print basic statistics (mean, min, max, etc.)
-    
-    # TODO: Return the dataframe
-    pass
+    data = pd.read_csv(filename)
+
+    print("=== Student Scores Data ===")
+    print(f"\nFirst 5 rows:")
+    print(data.head())
+
+    print(f"\nDataset shape: {data.shape[0]} rows, {data.shape[1]} columns")
+
+
+    print(f"\nBasic statistics:")
+    print(data.describe())
+
+    return data
 
 
 def create_scatter_plot(data):
-    """
-    Create a scatter plot to visualize the relationship between hours studied and scores
-    
-    Args:
-        data: pandas DataFrame with Hours and Scores columns
-    """
+    plt.figure(figsize=(10, 6))
     # TODO: Create a figure with size (10, 6)
-    
+    plt.scatter(data['Hours'], data['Scores'], color = 'purple', alpha = 0.6 )
     # TODO: Create a scatter plot with Hours on x-axis and Scores on y-axis
     #       Use color='purple' and alpha=0.6
-    
+    plt.xlabel('Hours Studied', fontsize=12)
+
     # TODO: Add x-axis label: 'Hours Studied'
-    
+    plt.ylabel('Test Scores', fontsize=12)
+
     # TODO: Add y-axis label: 'Test Score'
+    plt.title('Student Test Scores vs Hours Studied', fontsize=14, fontweight='bold')
     
     # TODO: Add title: 'Student Test Scores vs Hours Studied'
-    
+
+    plt.grid(True, alpha=0.3)
+
     # TODO: Add a grid with alpha=0.3
     
+    plt.savefig('scatter_plot.png', dpi=300, bbox_inches='tight')
+
     # TODO: Save the figure as 'scatter_plot.png' with dpi=300
+    print("\n✓ Scatter plot saved as 'scatter_plot.png'")
+    plt.show()
     
-    # TODO: Show the plot
-    pass
 
 
 def split_data(data):
-    """
-    Split data into features (X) and target (y), then into training and testing sets
-    
-    Args:
-        data: pandas DataFrame with Hours and Scores columns
-    
-    Returns:
-        X_train, X_test, y_train, y_test
-    """
+     X = data[['Hours']] 
     # TODO: Create X with the 'Hours' column (use double brackets to keep as DataFrame)
-    
+    y = data['Scores']
     # TODO: Create y with the 'Scores' column
-    
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
     # TODO: Split the data using train_test_split with test_size=0.2 and random_state=42
-    
+    print(f"\n=== Data Split ===")
+    print(f"Training set: {len(X_train)} samples")
+    print(f"Testing set: {len(X_test)} samples")
     # TODO: Print how many samples are in training and testing sets
-    
-    # TODO: Return X_train, X_test, y_train, y_test
-    pass
+    return X_train, X_test, y_train, y_test
 
 
 def train_model(X_train, y_train):
-    """
-    Create and train a linear regression model
-    
-    Args:
-        X_train: training features
-        y_train: training target values
-    
-    Returns:
-        trained LinearRegression model
-    """
+    model = LinearRegression()
+
     # TODO: Create a LinearRegression model
-    
+    model.fit(X_train, y_train)
+
     # TODO: Train the model using .fit()
-    
+    print(f"\n=== Model Training Complete ===")
+    print(f"Slope (coefficient): {model.coef_[0]:.2f}")
+    print(f"Intercept: {model.intercept_:.2f}")
+    print(f"\nEquation: Scores = {model.coef_[0]:.2f} × Hours + {model.intercept_:.2f}")
     # TODO: Print the coefficient (slope) and intercept
-    
-    # TODO: Return the trained model
-    pass
+    return model
 
 
 def evaluate_model(model, X_test, y_test):
-    """
-    Evaluate the model's performance on test data
-    
-    Args:
-        model: trained LinearRegression model
-        X_test: testing features
-        y_test: testing target values
-    
-    Returns:
-        predictions array
-    """
-    # TODO: Make predictions using the model
-    
+    predictions = model.predict(X_test)
     # TODO: Calculate R² score using r2_score()
-    
+    r2 = r2_score(y_test, predictions)
     # TODO: Calculate Mean Squared Error using mean_squared_error()
-    
+    mse = mean_squared_error(y_test, predictions)
     # TODO: Calculate Root Mean Squared Error (square root of MSE)
-    
+    rmse = np.sqrt(mse)
     # TODO: Print all three metrics with clear labels
+    print(f"\n=== Model Performance ===")
+    print(f"R² Score: {r2:.4f}")
+    print(f"  → Interpretation: The model explains {r2*100:.2f}% of the variance in Scores")
     
+    print(f"\nMean Squared Error: {mse:.2f}")
+    print(f"Root Mean Squared Error: {rmse:.2f}")
+    print(f"  → Interpretation: On average, predictions are off by {rmse:.2f}")
     # TODO: Return the predictions
-    pass
+    return predictions          
 
 
 def visualize_results(X_train, y_train, X_test, y_test, predictions, model):
