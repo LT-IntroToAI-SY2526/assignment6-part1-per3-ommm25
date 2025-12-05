@@ -165,8 +165,8 @@ def make_prediction(model, hours):
     
     # TODO: Print the prediction with a clear message
     
-    # TODO: Return the predicted score
-    pass
+    # TODO: Return the predicted scor
+    return predicted_score
 
 
 if __name__ == "__main__":
